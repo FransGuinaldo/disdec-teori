@@ -42,3 +42,5 @@ Untuk mencapai *high-availability*, aplikasi web ASGI Python (**Blacksheep**) di
 3. **Orkestrasi (`docker-compose.yml`)**: Menjalankan layanan `bs_app` dan `nginx` (mengekspos port `80:80`), lalu melakukan *horizontal scaling* menjadi 2 kontainer aplikasi dengan perintah:
    ```bash
    docker-compose up --build -d --scale bs_app=2
+
+Verifikasi: Ketika http://localhost diakses berulang kali, log kontainer (docker logs) menunjukkan distribusi request HTTP 200 OK dibagi ke load-balancing-bs_app-1 dan load-balancing-bs_app-2.
