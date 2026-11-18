@@ -4,6 +4,7 @@ NIM : 255410003
 ---
 Materi Minggu 5: Fault Tolerance dan Praktik Load Balancing dengan Nginx
 AI yang digunakan: Gemini
+
 Prompt: Buatkan rangkuman materi Fault Tolerance (Modul 05) beserta panduan praktikum Load Balancing aplikasi Python Blacksheep menggunakan Docker Compose dan Nginx dalam format Markdown.
 Bagian yang disesuaikan dari keluaran prompt ada pada: Penggabungan materi teori (05--fault-tolerant-sys.pdf) dan langkah teknis praktikum (web-app-py-blacksheep-load-balancing-nginx.pdf), termasuk konfigurasi nginx.conf, docker-compose.yml, serta contoh pola Circuit Breaker dan Retry.
 
@@ -41,5 +42,3 @@ Untuk mencapai *high-availability*, aplikasi web ASGI Python (**Blacksheep**) di
 3. **Orkestrasi (`docker-compose.yml`)**: Menjalankan layanan `bs_app` dan `nginx` (mengekspos port `80:80`), lalu melakukan *horizontal scaling* menjadi 2 kontainer aplikasi dengan perintah:
    ```bash
    docker-compose up --build -d --scale bs_app=2
-
-   Verifikasi: Ketika http://localhost diakses berulang kali, log kontainer (docker logs) menunjukkan distribusi request HTTP 200 OK dibagi ke load-balancing-bs_app-1 dan load-balancing-bs_app-2.
