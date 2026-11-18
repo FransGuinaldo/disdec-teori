@@ -55,3 +55,17 @@ Studi kasus mengemas aplikasi blog **Flask** (`flaskr`) menggunakan Python 3.14 
    RUN flask --app flaskr init-db
    EXPOSE 5000
    CMD ["flask", "--app", "flaskr", "run", "--host=0.0.0.0", "--port=5000"]
+
+   Build & Run dengan Docker:
+
+Mengaktifkan daemon (sudo systemctl start docker atau sudo dinitctl start dockerd).
+
+Membangun image: sudo docker build -f Dockerfile -t flaskr:1.0.0 .
+
+Menjalankan kontainer dengan port mapping 5001:5000: sudo docker run -p 5001:5000 flaskr:1.0.0 (diakses di http://localhost:5001).
+
+Build & Run dengan Podman (Daemonless):
+
+Mematikan service dockerd jika aktif, lalu membangun image menggunakan Dockerfile yang sama: podman build -f Dockerfile -t flaskr:1.0.0 .
+
+Menjalankan kontainer: podman run -p 5001:5000 flaskr:1.0.0.
