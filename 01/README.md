@@ -6,8 +6,8 @@ Materi Minggu 1: Pengenalan Sistem Terdistribusi dan Terdesentralisasi
 AI yang digunakan: Gemini
 
 Prompt: Buatkan rangkuman materi Pengenalan Sistem Terdistribusi dan Terdesentralisasi (Modul 01) dalam format Markdown yang terstruktur berdasarkan agenda pembahasan pada slide perkuliahan.
-
 Bagian yang disesuaikan dari keluaran prompt ada pada: Penyesuaian struktur sub-bab agar mengikuti urutan slide Agenda (mulai dari Arti Penting hingga Tren Masa Depan) serta penambahan detail contoh kasus dan penjelasan CAP Theorem.
+
 
 # Pengenalan Sistem Terdistribusi dan Terdesentralisasi
 
