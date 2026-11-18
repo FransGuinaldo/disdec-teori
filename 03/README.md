@@ -2,44 +2,45 @@ Nama : Francisco G I dc Corbafo
 ---
 NIM : 255410003
 ---
-Materi Minggu 2: Proses dan Komunikasi Antar Proses pada Sistem Terdistribusi
+Materi Minggu 3: Sinkronisasi dan Koordinasi pada Sistem Terdistribusi
 AI yang digunakan: Gemini
 
-Prompt: Buatkan rangkuman materi Proses dan Komunikasi Antar Proses pada Sistem Terdistribusi (Modul 02) dalam format Markdown sesuai agenda perkuliahan, mencakup manajemen proses, jenis IPC, protokol komunikasi, hingga konsep logical clock.
-Bagian yang disesuaikan dari keluaran prompt ada pada: Penambahan rincian mekanisme Lamport Logical Clock beserta contoh alur Sales, Product, dan Invoice Service sesuai studi kasus pada slide.
+Prompt: Buatkan rangkuman materi Sinkronisasi dan Koordinasi pada Sistem Terdistribusi (Modul 03) dalam format Markdown, meliputi perbedaan data race dan race condition, sinkronisasi waktu fisik (NTP & PTP), waktu logis (Vector Clocks), mutual exclusion, dan pemilihan koordinator.
+Bagian yang disesuaikan dari keluaran prompt ada pada: Penyusunan tabel perbandingan Data Race vs Race Condition, penjabaran langkah perhitungan Vector Clocks, serta ringkasan algoritma Mutual Exclusion dan Leader Election.
 
-# Proses dan Komunikasi Antar Proses pada Sistem Terdistribusi
+# Sinkronisasi dan Koordinasi pada Sistem Terdistribusi
 
-## 1. Konsep & Manajemen Proses
-Proses adalah instansiasi program yang sedang dieksekusi di memori (RAM) dan dijadwalkan oleh sistem operasi untuk dijalankan oleh CPU. Dalam sistem terdistribusi, manajemen proses mencakup:
-* **Process Creation**: Pembuatan proses baru, alokasi memori/sumber daya, dan inisialisasi *Process Control Block* (PCB).
-* **Process Migration**: Pemindahan proses yang sedang berjalan dari satu CPU/node ke node lain untuk penyeimbangan beban (*load balancing*) atau penanganan kegagalan.
-* **Process Monitoring**: Pemantauan status, penggunaan CPU/memori, dan performa proses.
+## 1. Pentingnya Sinkronisasi: Data Race vs Race Condition
+Sinkronisasi diperlukan untuk menyelaraskan proses, *state*, dan akses sumber daya bersama di berbagai node agar tidak terjadi konflik data maupun *deadlock*.
 
-## 2. Inter-Process Communication (IPC) pada Sistem Terdistribusi
-Karena proses berjalan pada node fisik yang berbeda dan tidak memiliki memori fisik bersama (*shared memory*), komunikasi dilakukan melalui jaringan dengan pendekatan:
-* **Message Passing**: Pertukaran pesan langsung antar-proses melalui jaringan (contoh: Socket TCP/UDP, standar MPI / *Message Passing Interface* seperti OpenMPI dan `mpi4py`).
-* **Remote Procedure Call (RPC)**: Mekanisme yang memungkinkan program memanggil fungsi/prosedur di komputer lain seolah-olah pemanggilan lokal menggunakan *Client/Server Stub* (contoh: gRPC).
-* **Message-Oriented Middleware (MOM)**: Infrastruktur perantara (*message broker*) yang memfasilitasi pengiriman pesan secara asinkron menggunakan *Message Queue* atau pola *Publish/Subscribe* (contoh protokol: AMQP, MQTT, XMPP, DDS).
+| Parameter | Data Race | Race Condition |
+| :--- | :--- | :--- |
+| **Fokus Utama** | Akses memori secara bersamaan (*concurrent memory access*). | Urutan dan waktu eksekusi instruksi (*timing & execution sequence*). |
+| **Level** | Low-level (akses memori fisik / CPU). | High-level (alur logika aplikasi / *business logic*). |
+| **Syarat / Penyebab** | Minimal 2 *thread* mengakses memori yang sama, minimal 1 operasi *write*, tanpa *lock*. | Kebenaran hasil bergantung pada urutan eksekusi yang tidak dapat diprediksi. |
+| **Dampak** | *Undefined behavior*, korupsi memori, nilai tertimpa. | Bug logika bisnis (misal: stok barang salah hitung, saldo minus). |
+| **Solusi** | Mutex / Lock, tipe data *Atomic*. | *Atomic Check-and-Act*, *Database Transaction Lock*. |
 
-## 3. Komunikasi Sinkron vs Asinkron & Permasalahannya
-* **Sinkron**: Pengirim berhenti (*blocking*) menunggu balasan dari penerima sebelum melanjutkan proses (contoh: HTTP request-response, RPC standar).
-* **Asinkron**: Pengirim langsung melanjutkan eksekusi setelah mengirim pesan tanpa menunggu balasan seketika (contoh: Message Queue / Pub-Sub).
-* **Masalah Utama IPC**:
-  1. *Reliability*: Kehilangan paket diatasi dengan *acknowledgement* (ACK), transmisi ulang, dan protokol TCP.
-  2. *Ordering*: Menjaga urutan logis pesan menggunakan FIFO *pipes*, *message queue*, atau urutan RPC.
-  3. *Security*: Enkripsi (SSL/TLS) dan autentikasi (OAuth2).
-  4. *Performance*: Optimalisasi latensi dan *bandwidth*.
+## 2. Sinkronisasi Waktu Fisik
+Penyelarasan *real-time clock* antar-node terhadap standar internasional **UTC** (*Coordinated Universal Time*) yang berbasis **TAI** (*International Atomic Time*) menggunakan referensi satelit GPS / *Atomic Clock*:
+* **NTP (Network Time Protocol)**: Protokol standar (RFC 5905) berbasis hierarki *Stratum* untuk menyinkronkan jam komputer melalui jaringan IP dengan akurasi milidetik (implementasi di Linux: `chrony`).
+* **PTP (Precision Time Protocol - IEEE 1588)**: Protokol sinkronisasi waktu dengan presisi jauh lebih tinggi (hingga sub-mikrodetik) yang memerlukan dukungan *hardware timestamping* pada *Network Interface Card* (NIC) (implementasi di Linux: `linuxptp` dengan `ptp4l` dan `phc2sys`).
 
-## 4. Protokol Komunikasi
-* **Lapisan Transport**: TCP (andal, terurut), UDP (cepat, tanpa koneksi), serta QUIC (fondasi HTTP/3 di atas UDP).
-* **Lapisan Aplikasi / API**: HTTP/HTTPS sebagai transport untuk arsitektur REST, GraphQL, dan gRPC.
+## 3. Sinkronisasi Waktu Logis (Vector Clocks)
+Untuk melacak hubungan kausalitas antar-proses secara lebih akurat dibandingkan Lamport Scalar Clock, digunakan **Vector Clocks** (array dinamis berukuran $N$ sesuai jumlah proses):
+* Setiap proses $P_i$ memulai vektor dengan nilai nol, misal `[0, 0, 0]`.
+* Setiap terjadi *internal event* atau sebelum mengirim pesan, $P_i$ menambah elemen indeksnya sendiri sebesar $+1$.
+* Saat menerima pesan bervektor $V_{msg}$, $P_i$ memperbarui setiap elemen dengan nilai maksimum ($\max(V_{lokal}[k], V_{msg}[k])$), lalu menambah indeksnya sendiri sebesar $+1$.
+* **Aturan Perbandingan**: Event $A$ terjadi sebelum $B$ ($A \rightarrow B$) jika seluruh elemen vektor $A \le B$ dan minimal ada satu elemen yang lebih kecil. Jika tidak memenuhi syarat tersebut, kedua event bersifat *concurrent* (independen).
 
-## 5. Sinkronisasi, Logical Clock, & Koordinasi Proses
-* **Sinkronisasi Jam**: Setiap node memiliki jam perangkat keras lokal yang rentan bergeser (*clock drift*). Sinkronisasi waktu fisik menggunakan NTP atau PTP (lebih presisi dari NTP) berbasis sumber *Atomic Clock* / GPS.
-* **Lamport Logical Clock**: Digunakan untuk menentukan urutan sebab-akibat (*causal order*) tanpa bergantung pada jam fisik:
-  * Setiap kejadian lokal menaikkan nilai *counter* lokal sebesar $+1$.
-  * Saat mengirim pesan, nilai *counter* disertakan.
-  * Saat menerima pesan, penerima membandingkan *counter* lokal dengan *counter* pesan, mengambil nilai maksimum, lalu menambahkannya dengan $+1$ ($\max(L_{lokal}, L_{pesan}) + 1$).
-  * *Pengembangan lanjutan*: Vector Clocks, Plausible Clocks, Interval Tree Clocks, dan Blum Clocks.
-* **Koordinasi & Isu Terkini**: Menggunakan layanan koordinasi seperti Apache ZooKeeper, etcd, Consul, atau KRaft. Tren saat ini mencakup *Edge/Fog Computing*, *Observability/Telemetry*, dan orkestrasi kontainer (Kubernetes).
+## 4. Mutual Exclusion Terdistribusi
+Mekanisme untuk memastikan hanya satu proses yang dapat memasuki *Critical Section* (mengakses sumber daya bersama) pada satu waktu dengan memenuhi prinsip *Mutual Exclusion*, *Progress*, *Bounded Waiting*, dan *Fairness*:
+1. **Centralized Algorithm**: Satu node koordinator mengatur izin akses. Sederhana, namun rentan *single point of failure* dan *bottleneck*.
+2. **Ricart-Agrawala Algorithm**: Terdistribusi penuh menggunakan *timestamp*. Proses meminta izin ke semua node lain dan masuk *Critical Section* setelah menerima balasan `OK` dari seluruh node (membutuhkan $2 \times (N - 1)$ pesan).
+3. **Token-Based Algorithm**: Sebuah token unik diedarkan antar-node (misal dalam topologi cincin). Hanya pemegang token yang boleh mengakses sumber daya. Sangat hemat pesan (1 pesan per entri), namun sulit mendeteksi jika token hilang.
+
+## 5. Pemilihan Koordinator (Leader Election)
+Ketika koordinator mengalami kegagalan atau sistem baru berjalan, node harus memilih pemimpin secara otomatis:
+* **Bully Algorithm**: Node dengan ID tertinggi yang mendeteksi kegagalan akan mengambil alih dan "mengintimidasi" node ber-ID lebih rendah untuk tunduk.
+* **Ring Algorithm**: Pesan pemilihan diedarkan melingkar melewati semua node aktif untuk mengumpulkan daftar ID, lalu node dengan ID tertinggi ditetapkan sebagai koordinator.
+* **Berbasis Konsensus (Raft / Paxos / Zab)**: Digunakan pada sistem produksi modern seperti Kubernetes (`etcd` menggunakan Raft) dan Apache ZooKeeper (menggunakan Zab).
