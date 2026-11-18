@@ -4,7 +4,6 @@ NIM : 255410003
 ---
 Materi Minggu 4: Konsistensi dan Replikasi pada Sistem Terdistribusi
 AI yang digunakan: Gemini
-
 Prompt: Buatkan rangkuman materi Konsistensi dan Replikasi pada Sistem Terdistribusi (Modul 04) dalam format Markdown, mencakup Teorema CAP, spektrum model konsistensi, trade-off latensi, strategi replikasi, penanganan konflik (CRDT & OT), dan protokol replikasi.
 Bagian yang disesuaikan dari keluaran prompt ada pada: Penjabaran spektrum 7 model konsistensi (dari Linearizable hingga Eventual), rumus Quorum-based replication, serta penjelasan cara kerja CRDT dan Operational Transformation.
 
