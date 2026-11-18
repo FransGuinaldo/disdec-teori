@@ -1,3 +1,7 @@
+Nama : Francisco G I dc Corbafo
+---
+NIM : 255410003
+---
 Materi Minggu 1: Pengenalan Sistem Terdistribusi dan Terdesentralisasi
 
 Prompt: Buatkan ringkasan materi kuliah mengenai pengenalan sistem terdistribusi dan terdesentralisasi, termasuk karakteristik, perbedaan, dan arsitekturnya.
