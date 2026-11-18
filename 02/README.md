@@ -4,6 +4,7 @@ NIM : 255410003
 ---
 Materi Minggu 2: Proses dan Komunikasi Antar Proses pada Sistem Terdistribusi
 AI yang digunakan: Gemini
+
 Prompt: Buatkan rangkuman materi Proses dan Komunikasi Antar Proses pada Sistem Terdistribusi (Modul 02) dalam format Markdown sesuai agenda perkuliahan, mencakup manajemen proses, jenis IPC, protokol komunikasi, hingga konsep logical clock.
 Bagian yang disesuaikan dari keluaran prompt ada pada: Penambahan rincian mekanisme Lamport Logical Clock beserta contoh alur Sales, Product, dan Invoice Service sesuai studi kasus pada slide.
 
