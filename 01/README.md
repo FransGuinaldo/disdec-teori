@@ -1,4 +1,5 @@
 Materi Minggu 1: Pengenalan Sistem Terdistribusi dan Terdesentralisasi
+
 Prompt: Buatkan ringkasan materi kuliah mengenai pengenalan sistem terdistribusi dan terdesentralisasi, termasuk karakteristik, perbedaan, dan arsitekturnya.
 Bagian yang disesuaikan dari keluaran prompt ada pada: Menambahkan poin spesifik terkait arsitektur dasar (Client-Server, P2P, Hybrid) serta penjelasan CAP Theorem dari modul kuliah.
 
